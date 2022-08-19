@@ -1,0 +1,279 @@
+AdminLogin.java
+packagecom.servlets;
+
+importjava.io.IOException;
+importjava.sql.SQLException;
+importjavax.servlet.ServletException;
+importjavax.servlet.annotation.WebServlet;
+importjavax.servlet.http.HttpServlet;
+importjavax.servlet.http.HttpServletRequest;
+importjavax.servlet.http.HttpServletResponse;
+importjavax.servlet.http.HttpSession;
+importcom.database.Dao;
+
+@WebServlet("/AdminLogin")
+publicclassAdminLoginextendsHttpServlet {
+    privatestaticfinallongserialVersionUID = 1L;
+    
+protectedvoiddoPost(HttpServletRequestrequest, HttpServletResponseresponse) throwsServletException, IOException {
+        
+        Stringemail=request.getParameter("email");
+        Stringpassword=request.getParameter("password");
+        
+        try {
+            Daodao=newDao();
+            
+            if(dao.checkAdmin(email,password)) {
+                response.sendRedirect("AdminHome.jsp");
+            }
+            else {
+                HttpSessionsession=request.getSession();
+                session.setAttribute("message", "Invalid Details");
+                response.sendRedirect("AdminPage.jsp");
+            }
+        } catch (ClassNotFoundException | SQLExceptione) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+}
+ 
+UserLogin.java
+packagecom.servlets;
+
+importjavax.servlet.annotation.WebServlet;
+importjava.io.IOException;
+importjava.sql.SQLException;
+importjava.util.HashMap;
+importjavax.servlet.ServletException;
+importjavax.servlet.http.HttpServlet;
+importjavax.servlet.http.HttpServletRequest;
+importjavax.servlet.http.HttpServletResponse;
+importjavax.servlet.http.HttpSession;
+importcom.database.Dao;
+
+@WebServlet("/UserLogin")
+publicclassUserLoginextendsHttpServlet {
+    privatestaticfinallongserialVersionUID = 1L;
+protectedvoiddoPost(HttpServletRequestrequest, HttpServletResponseresponse) throwsServletException, IOException {
+        
+        Stringemail=request.getParameter("email");
+        Stringpassword=request.getParameter("password");
+        
+        try {
+            Daodao=newDao();
+            HashMap<String,String>user=dao.checkUser(email,password);
+            HttpSessionsession=request.getSession();
+            if(user!=null) {
+                session.setAttribute("user", user);
+                response.sendRedirect("HomePage.jsp");
+            }
+            else {
+                session.setAttribute("message", "Invalid Details");
+                response.sendRedirect("UserPage.jsp");
+            }
+        } catch (ClassNotFoundException | SQLExceptione) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+}
+ 
+UserRegistration.java
+packagecom.servlets;
+
+importjavax.servlet.annotation.WebServlet;
+importjava.io.IOException;
+importjava.sql.SQLException;
+importjava.util.HashMap;
+importjavax.servlet.ServletException;
+importjavax.servlet.http.HttpServlet;
+importjavax.servlet.http.HttpServletRequest;
+importjavax.servlet.http.HttpServletResponse;
+importjavax.servlet.http.HttpSession;
+importcom.database.Dao;
+
+@WebServlet("/UserRegistration")
+publicclassUserRegistrationextendsHttpServlet {
+    privatestaticfinallongserialVersionUID = 1L;
+    protectedvoiddoPost(HttpServletRequestrequest, HttpServletResponseresponse) throwsServletException, IOException {
+        Stringemail=request.getParameter("email");
+        Stringpassword=request.getParameter("password");
+        Stringname=request.getParameter("name");
+        Stringphno=request.getParameter("phno");
+        Stringadno=request.getParameter("adno");
+        
+        HashMap<String,String>user=newHashMap<>();
+        user.put("email", email);
+        user.put("password", password);
+        user.put("name", name);
+        user.put("phno", phno);
+        user.put("adno", adno);
+        
+        try {
+            Daodao=newDao();
+            booleanresult=dao.insertUser(user);
+            HttpSessionsession=request.getSession();
+            if(result) {
+                session.setAttribute("message", "User Added Successfully");
+            }
+            else {
+                session.setAttribute("message","Invalid Details");
+            }
+        } catch (ClassNotFoundException | SQLExceptione) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        response.sendRedirect("UserPage.jsp");
+    }
+}
+ 
+InsertFlight.java
+packagecom.servlets;
+importjavax.servlet.annotation.WebServlet;
+importjavax.servlet.http.HttpServlet;
+importjava.io.IOException;
+importjava.sql.SQLException;
+importjava.util.HashMap;
+importjavax.servlet.ServletException;
+importjavax.servlet.http.HttpServletRequest;
+importjavax.servlet.http.HttpServletResponse;
+importjavax.servlet.http.HttpSession;
+importcom.database.Dao;
+
+@WebServlet("/InsertFlight")
+publicclassInsertFlightextendsHttpServlet {
+    privatestaticfinallongserialVersionUID = 1L;
+protectedvoiddoPost(HttpServletRequestrequest, HttpServletResponseresponse) throwsServletException, IOException {
+        
+        Stringname=request.getParameter("name");
+        Stringfrom=request.getParameter("from");
+        Stringto=request.getParameter("to");
+        Stringdeparture=request.getParameter("departure");
+        Stringtime=request.getParameter("time");
+        Stringprice=request.getParameter("price");
+        HashMap<String,String>flight=newHashMap<>();
+        flight.put("name", name);
+        flight.put("from", from);
+        flight.put("to", to);
+        flight.put("date", departure);
+        flight.put("time", time);
+        flight.put("price", price);
+        try {
+            Daodao=newDao();
+            HttpSessionsession=request.getSession();
+            if(dao.insertFlight(flight)) {    
+                session.setAttribute("message", "Flight Added Successfully");
+            }
+            else {
+                session.setAttribute("message", "Invalid Details");
+            }
+        } catch (ClassNotFoundException | SQLExceptione) {
+            // TODO Auto-generated catch block
+            System.out.print("error");
+            e.printStackTrace();
+        }
+        response.sendRedirect("AdminHome.jsp");
+    }
+}
+ 
+ForgotPassword.java
+packagecom.servlets;
+
+importjavax.servlet.annotation.WebServlet;
+importjava.io.IOException;
+importjava.sql.SQLException;
+importjavax.servlet.ServletException;
+importjavax.servlet.http.HttpServlet;
+importjavax.servlet.http.HttpServletRequest;
+importjavax.servlet.http.HttpServletResponse;
+importjavax.servlet.http.HttpSession;
+importcom.database.Dao;
+@WebServlet("/ForgotPassword")
+publicclassForgotPasswordextendsHttpServlet {
+    privatestaticfinallongserialVersionUID = 1L;
+protectedvoiddoPost(HttpServletRequestrequest, HttpServletResponseresponse) throwsServletException, IOException {
+        
+        Stringemail=request.getParameter("email");
+        Stringpassword=request.getParameter("password");
+        
+        try {
+            Daodao=newDao();
+            HttpSessionsession=request.getSession();
+            if(dao.changeAdminPassword(email,password)) {
+                session.setAttribute("message", "Password Changed Successfully");
+            }
+            else {
+                session.setAttribute("message", "Invalid Details");
+            }
+        } catch (ClassNotFoundException | SQLExceptione) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        response.sendRedirect("AdminPage.jsp"); 
+    }
+}
+
+ 
+Logout.java
+packagecom.servlets;
+
+importjavax.servlet.annotation.WebServlet;
+importjava.io.IOException;
+importjavax.servlet.ServletException;
+importjavax.servlet.http.HttpServlet;
+importjavax.servlet.http.HttpServletRequest;
+importjavax.servlet.http.HttpServletResponse;
+importjavax.servlet.http.HttpSession;
+
+@WebServlet("/Logout")
+publicclassLogoutextendsHttpServlet {
+    privatestaticfinallongserialVersionUID = 1L;
+protectedvoiddoGet(HttpServletRequestrequest, HttpServletResponseresponse) throwsServletException, IOException {
+        
+        HttpSessionsession=request.getSession();
+        session.setAttribute("user", null);
+        response.sendRedirect("HomePage.jsp");
+    }
+}
+
+ 
+FlightList.java
+packagecom.servlets;
+
+importjava.io.IOException;
+importjava.sql.SQLException;
+importjava.util.List;
+importjavax.servlet.ServletException;
+importjavax.servlet.annotation.WebServlet;
+importjavax.servlet.http.HttpServlet;
+importjavax.servlet.http.HttpServletRequest;
+importjavax.servlet.http.HttpServletResponse;
+importjavax.servlet.http.HttpSession;
+importcom.database.Dao;
+
+@WebServlet("/FlightList")
+publicclassFlightListextendsHttpServlet {
+    privatestaticfinallongserialVersionUID = 1L;
+    
+    protectedvoiddoPost(HttpServletRequestrequest, HttpServletResponseresponse) throwsServletException, IOException {
+        
+        Stringfrom=request.getParameter("from");
+        Stringto=request.getParameter("to");
+        Stringdeparture=request.getParameter("departure");
+        
+        try {
+            Daodao = newDao();
+            List<String[]>flights=dao.getAvailableFlights(from, to, departure);            
+            HttpSessionsession=request.getSession();
+            session.setAttribute("flights", flights);
+            
+        } catch (ClassNotFoundException | SQLExceptione) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        response.sendRedirect("FlightList.jsp");
+    }
+}
+ 
+
